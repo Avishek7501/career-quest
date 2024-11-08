@@ -1,0 +1,164 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  UserId    Int      @id @default(autoincrement())
+  Username  String   @unique
+  Email     String   @unique
+  Password  String
+  Address   String?
+  Phone     String?
+  Gender    String?
+  CreatedAt DateTime @default(now())
+  UpdatedAt DateTime @updatedAt
+
+  // Relations
+  UserFollower_UserFollower_FromUserFollows UserFollower[]   @relation("UserFollower_FromUser")
+  UserFollower_UserFollower_ToUserFollows   UserFollower[]   @relation("UserFollower_ToUser")
+  Leaderboard                               Leaderboard?
+  JobApplications                           JobApplication[]
+
+  @@map("User")
+}
+
+model UserFollower {
+  FromUserId Int
+  ToUserId   Int
+  CreatedAt  DateTime @default(now())
+  UpdatedAt  DateTime @updatedAt
+
+  // Relations
+  FromUser User @relation("UserFollower_FromUser", fields: [FromUserId], references: [UserId])
+  ToUser   User @relation("UserFollower_ToUser", fields: [ToUserId], references: [UserId])
+
+  @@id([FromUserId, ToUserId])
+  @@map("UserFollower")
+}
+
+model Leaderboard {
+  LeaderboardId Int      @id @default(autoincrement())
+  UserId        Int      @unique
+  CurrentScore  Int
+  TotalScore    Int
+  CreatedAt     DateTime @default(now())
+  UpdatedAt     DateTime @updatedAt
+
+  // Relations
+  User User @relation(fields: [UserId], references: [UserId])
+
+  @@map("Leaderboard")
+}
+
+model JobApplication {
+  JobApplicationId Int      @id @default(autoincrement())
+  JobSimulationId  Int
+  UserId           Int
+  CreatedAt        DateTime @default(now())
+  UpdatedAt        DateTime @updatedAt
+
+  // Relations
+  JobSimulation JobSimulation @relation(fields: [JobSimulationId], references: [JobSimulationId])
+  User          User          @relation(fields: [UserId], references: [UserId])
+
+  @@map("JobApplication")
+}
+
+model JobSimulation {
+  JobSimulationId Int      @id @default(autoincrement())
+  JobCategoryId   Int
+  JobTitle        String
+  JobDescription  String
+  CreatedAt       DateTime @default(now())
+  UpdatedAt       DateTime @updatedAt
+
+  // Relations
+  JobCategory         JobCategory          @relation(fields: [JobCategoryId], references: [CategoryId])
+  JobApplications     JobApplication[]
+  JobSimulationSkills JobSimulationSkill[]
+  InterviewQuestions  InterviewQuestion[]
+
+  @@map("JobSimulation")
+}
+
+model JobCategory {
+  CategoryId   Int      @id @default(autoincrement())
+  CategoryName String
+  CreatedAt    DateTime @default(now())
+  UpdatedAt    DateTime @updatedAt
+  CreatedBy    Int
+
+  // Relations
+  JobSimulations JobSimulation[]
+  JobSkills      JobSkill[]
+
+  @@map("JobCategory")
+}
+
+model JobSimulationSkill {
+  JobSimulationSkillId Int      @id @default(autoincrement())
+  JobSimulationId      Int
+  JobSkillId           Int
+  CreatedAt            DateTime @default(now())
+  UpdatedAt            DateTime @updatedAt
+
+  // Relations
+  JobSimulation JobSimulation @relation(fields: [JobSimulationId], references: [JobSimulationId])
+  JobSkill      JobSkill      @relation(fields: [JobSkillId], references: [JobSkillId])
+
+  @@map("JobSimulationSkill")
+}
+
+model JobSkill {
+  JobSkillId    Int      @id @default(autoincrement())
+  JobCategoryId Int
+  SkillName     String
+  CreatedAt     DateTime @default(now())
+  UpdatedAt     DateTime @updatedAt
+
+  // Relations
+  JobCategory         JobCategory          @relation(fields: [JobCategoryId], references: [CategoryId])
+  JobSimulationSkills JobSimulationSkill[]
+
+  @@map("JobSkill")
+}
+
+model InterviewQuestion {
+  InterviewQuestionId Int      @id @default(autoincrement())
+  JobSimulationId     Int
+  QuestionText        String
+  QuestionType        String // Assuming an enum type could be used here, e.g., MCQ or True/False
+  CreatedAt           DateTime @default(now())
+  UpdatedAt           DateTime @updatedAt
+
+  // Relations
+  JobSimulation    JobSimulation     @relation(fields: [JobSimulationId], references: [JobSimulationId])
+  InterviewAnswers InterviewAnswer[]
+
+  @@map("InterviewQuestion")
+}
+
+model InterviewAnswer {
+  InterviewAnswerId   Int      @id @default(autoincrement())
+  InterviewQuestionId Int
+  Answer              String
+  IsCorrect           Boolean
+  CreatedAt           DateTime @default(now())
+  UpdatedAt           DateTime @updatedAt
+
+  // Relations
+  InterviewQuestion InterviewQuestion @relation(fields: [InterviewQuestionId], references: [InterviewQuestionId])
+
+  @@map("InterviewAnswer")
+}

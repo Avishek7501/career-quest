@@ -6,11 +6,8 @@ const routerSetup = (app: Express) => {
     // Define the directory where your routers are located
     const baseRoutersDirectory = path.join(__dirname, '../routers');
 
-    console.log('Base Routers: ', baseRoutersDirectory);
-
     // Read the directories in the base routers directory
     const versionDirectories = fs.readdirSync(baseRoutersDirectory);
-    console.log(versionDirectories);
 
     // Iterate through each version directory
     versionDirectories.forEach((versionDirectory) => {
@@ -18,13 +15,11 @@ const routerSetup = (app: Express) => {
             baseRoutersDirectory,
             versionDirectory
         );
-        console.log(versionDirectoryPath);
 
         // Check if it's a directory
         if (fs.statSync(versionDirectoryPath).isDirectory()) {
             // Read the files in the version directory
             const routerFiles = fs.readdirSync(versionDirectoryPath);
-            console.log(routerFiles);
 
             // Iterate through each router file and dynamically import and use it
             routerFiles.forEach((routerFile) => {
@@ -32,7 +27,6 @@ const routerSetup = (app: Express) => {
                 const routeName = path
                     .basename(routerFile, path.extname(routerFile))
                     .replace('Router', '');
-                console.log(routeName);
 
                 // Dynamically import the router module
                 // eslint-disable-next-line @typescript-eslint/no-require-imports
