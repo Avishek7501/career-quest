@@ -23,7 +23,7 @@ async function main() {
     // For each category, seed 1000 job skills
     for (const category of jobCategories) {
         const skillsBatch = Array.from({ length: 1000 }).map(() => ({
-            SkillName: faker.person.jobTitle as unknown as string,
+            SkillName: faker.person.jobTitle() as unknown as string,
             JobCategoryId: category.CategoryId
         }));
 

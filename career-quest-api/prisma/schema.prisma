@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,21 +8,19 @@ datasource db {
 }
 
 model User {
-  UserId    Int      @id @default(autoincrement())
-  Username  String   @unique
-  Email     String   @unique
-  Password  String
-  Address   String?
-  Phone     String?
-  Gender    String?
-  CreatedAt DateTime @default(now())
-  UpdatedAt DateTime @updatedAt
-
-  // Relations
+  UserId                                    Int              @id @default(autoincrement())
+  Username                                  String           @unique
+  Email                                     String           @unique
+  Password                                  String
+  Address                                   String?
+  Phone                                     String?
+  Gender                                    String?
+  CreatedAt                                 DateTime         @default(now())
+  UpdatedAt                                 DateTime         @updatedAt
+  JobApplications                           JobApplication[]
+  Leaderboard                               Leaderboard?
   UserFollower_UserFollower_FromUserFollows UserFollower[]   @relation("UserFollower_FromUser")
   UserFollower_UserFollower_ToUserFollows   UserFollower[]   @relation("UserFollower_ToUser")
-  Leaderboard                               Leaderboard?
-  JobApplications                           JobApplication[]
 
   @@map("User")
 }
@@ -38,12 +30,11 @@ model UserFollower {
   ToUserId   Int
   CreatedAt  DateTime @default(now())
   UpdatedAt  DateTime @updatedAt
-
-  // Relations
-  FromUser User @relation("UserFollower_FromUser", fields: [FromUserId], references: [UserId])
-  ToUser   User @relation("UserFollower_ToUser", fields: [ToUserId], references: [UserId])
+  FromUser   User     @relation("UserFollower_FromUser", fields: [FromUserId], references: [UserId])
+  ToUser     User     @relation("UserFollower_ToUser", fields: [ToUserId], references: [UserId])
 
   @@id([FromUserId, ToUserId])
+  @@index([ToUserId], map: "UserFollower_ToUserId_fkey")
   @@map("UserFollower")
 }
 
@@ -54,52 +45,47 @@ model Leaderboard {
   TotalScore    Int
   CreatedAt     DateTime @default(now())
   UpdatedAt     DateTime @updatedAt
-
-  // Relations
-  User User @relation(fields: [UserId], references: [UserId])
+  User          User     @relation(fields: [UserId], references: [UserId])
 
   @@map("Leaderboard")
 }
 
 model JobApplication {
-  JobApplicationId Int      @id @default(autoincrement())
+  JobApplicationId Int           @id @default(autoincrement())
   JobSimulationId  Int
   UserId           Int
-  CreatedAt        DateTime @default(now())
-  UpdatedAt        DateTime @updatedAt
+  CreatedAt        DateTime      @default(now())
+  UpdatedAt        DateTime      @updatedAt
+  JobSimulation    JobSimulation @relation(fields: [JobSimulationId], references: [JobSimulationId])
+  User             User          @relation(fields: [UserId], references: [UserId])
 
-  // Relations
-  JobSimulation JobSimulation @relation(fields: [JobSimulationId], references: [JobSimulationId])
-  User          User          @relation(fields: [UserId], references: [UserId])
-
+  @@index([JobSimulationId], map: "JobApplication_JobSimulationId_fkey")
+  @@index([UserId], map: "JobApplication_UserId_fkey")
   @@map("JobApplication")
 }
 
 model JobSimulation {
-  JobSimulationId Int      @id @default(autoincrement())
-  JobCategoryId   Int
-  JobTitle        String
-  JobDescription  String
-  CreatedAt       DateTime @default(now())
-  UpdatedAt       DateTime @updatedAt
-
-  // Relations
-  JobCategory         JobCategory          @relation(fields: [JobCategoryId], references: [CategoryId])
-  JobApplications     JobApplication[]
-  JobSimulationSkills JobSimulationSkill[]
+  JobSimulationId     Int                  @id @default(autoincrement())
+  JobCategoryId       Int
+  JobTitle            String
+  JobDescription      String
+  CreatedAt           DateTime             @default(now())
+  UpdatedAt           DateTime             @updatedAt
   InterviewQuestions  InterviewQuestion[]
+  JobApplications     JobApplication[]
+  JobCategory         JobCategory          @relation(fields: [JobCategoryId], references: [CategoryId])
+  JobSimulationSkills JobSimulationSkill[]
 
+  @@index([JobCategoryId], map: "JobSimulation_JobCategoryId_fkey")
   @@map("JobSimulation")
 }
 
 model JobCategory {
-  CategoryId   Int      @id @default(autoincrement())
-  CategoryName String
-  CreatedAt    DateTime @default(now())
-  UpdatedAt    DateTime @updatedAt
-  CreatedBy    Int
-
-  // Relations
+  CategoryId     Int             @id @default(autoincrement())
+  CategoryName   String
+  CreatedAt      DateTime        @default(now())
+  UpdatedAt      DateTime        @updatedAt
+  CreatedBy      Int
   JobSimulations JobSimulation[]
   JobSkills      JobSkill[]
 
@@ -107,58 +93,55 @@ model JobCategory {
 }
 
 model JobSimulationSkill {
-  JobSimulationSkillId Int      @id @default(autoincrement())
+  JobSimulationSkillId Int           @id @default(autoincrement())
   JobSimulationId      Int
   JobSkillId           Int
-  CreatedAt            DateTime @default(now())
-  UpdatedAt            DateTime @updatedAt
+  CreatedAt            DateTime      @default(now())
+  UpdatedAt            DateTime      @updatedAt
+  JobSimulation        JobSimulation @relation(fields: [JobSimulationId], references: [JobSimulationId])
+  JobSkill             JobSkill      @relation(fields: [JobSkillId], references: [JobSkillId])
 
-  // Relations
-  JobSimulation JobSimulation @relation(fields: [JobSimulationId], references: [JobSimulationId])
-  JobSkill      JobSkill      @relation(fields: [JobSkillId], references: [JobSkillId])
-
+  @@index([JobSimulationId], map: "JobSimulationSkill_JobSimulationId_fkey")
+  @@index([JobSkillId], map: "JobSimulationSkill_JobSkillId_fkey")
   @@map("JobSimulationSkill")
 }
 
 model JobSkill {
-  JobSkillId    Int      @id @default(autoincrement())
-  JobCategoryId Int
-  SkillName     String
-  CreatedAt     DateTime @default(now())
-  UpdatedAt     DateTime @updatedAt
-
-  // Relations
-  JobCategory         JobCategory          @relation(fields: [JobCategoryId], references: [CategoryId])
+  JobSkillId          Int                  @id @default(autoincrement())
+  JobCategoryId       Int
+  SkillName           String
+  CreatedAt           DateTime             @default(now())
+  UpdatedAt           DateTime             @updatedAt
   JobSimulationSkills JobSimulationSkill[]
+  JobCategory         JobCategory          @relation(fields: [JobCategoryId], references: [CategoryId])
 
+  @@index([JobCategoryId], map: "JobSkill_JobCategoryId_fkey")
   @@map("JobSkill")
 }
 
 model InterviewQuestion {
-  InterviewQuestionId Int      @id @default(autoincrement())
+  InterviewQuestionId Int               @id @default(autoincrement())
   JobSimulationId     Int
   QuestionText        String
-  QuestionType        String // Assuming an enum type could be used here, e.g., MCQ or True/False
-  CreatedAt           DateTime @default(now())
-  UpdatedAt           DateTime @updatedAt
+  QuestionType        String
+  CreatedAt           DateTime          @default(now())
+  UpdatedAt           DateTime          @updatedAt
+  InterviewAnswers    InterviewAnswer[]
+  JobSimulation       JobSimulation     @relation(fields: [JobSimulationId], references: [JobSimulationId])
 
-  // Relations
-  JobSimulation    JobSimulation     @relation(fields: [JobSimulationId], references: [JobSimulationId])
-  InterviewAnswers InterviewAnswer[]
-
+  @@index([JobSimulationId], map: "InterviewQuestion_JobSimulationId_fkey")
   @@map("InterviewQuestion")
 }
 
 model InterviewAnswer {
-  InterviewAnswerId   Int      @id @default(autoincrement())
+  InterviewAnswerId   Int               @id @default(autoincrement())
   InterviewQuestionId Int
   Answer              String
   IsCorrect           Boolean
-  CreatedAt           DateTime @default(now())
-  UpdatedAt           DateTime @updatedAt
+  CreatedAt           DateTime          @default(now())
+  UpdatedAt           DateTime          @updatedAt
+  InterviewQuestion   InterviewQuestion @relation(fields: [InterviewQuestionId], references: [InterviewQuestionId])
 
-  // Relations
-  InterviewQuestion InterviewQuestion @relation(fields: [InterviewQuestionId], references: [InterviewQuestionId])
-
+  @@index([InterviewQuestionId], map: "InterviewAnswer_InterviewQuestionId_fkey")
   @@map("InterviewAnswer")
 }
