@@ -69,6 +69,71 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"JobSimulationSkill": {
+				"properties": {
+					"JobSimulationSkillId": {
+						"type": "number",
+						"format": "double"
+					},
+					"JobSimulationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"JobSkillId": {
+						"type": "number",
+						"format": "double"
+					},
+					"CreatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"UpdatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"JobSimulationSkillId",
+					"JobSimulationId",
+					"JobSkillId",
+					"CreatedAt",
+					"UpdatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateJobSimulationSkillInput": {
+				"properties": {
+					"JobSimulationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"JobSkillId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"JobSimulationId",
+					"JobSkillId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateJobSimulationSkillInput": {
+				"properties": {
+					"JobSimulationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"JobSkillId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"JobSimulation": {
 				"properties": {
 					"JobSimulationId": {
@@ -391,6 +456,188 @@
 						"description": "The ID of the job skill",
 						"in": "path",
 						"name": "jobSkillId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/simulation/skill": {
+			"get": {
+				"operationId": "GetAllJobSimulationSkills",
+				"responses": {
+					"200": {
+						"description": "A list of all job simulation skills",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/JobSimulationSkill"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all job simulation skills",
+				"tags": [
+					"JobSimulationSkill"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateJobSimulationSkill",
+				"responses": {
+					"200": {
+						"description": "The created job simulation skill",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobSimulationSkill"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new job simulation skill",
+				"tags": [
+					"JobSimulationSkill"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The data for the new job simulation skill",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateJobSimulationSkillInput",
+								"description": "The data for the new job simulation skill"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/simulation/skill/{jobSimulationSkillId}": {
+			"get": {
+				"operationId": "GetJobSimulationSkillById",
+				"responses": {
+					"200": {
+						"description": "The job simulation skill with the specified ID",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobSimulationSkill"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a job simulation skill by ID",
+				"tags": [
+					"JobSimulationSkill"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the job simulation skill",
+						"in": "path",
+						"name": "jobSimulationSkillId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateJobSimulationSkill",
+				"responses": {
+					"200": {
+						"description": "The updated job simulation skill",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobSimulationSkill"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update a job simulation skill by ID",
+				"tags": [
+					"JobSimulationSkill"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the job simulation skill",
+						"in": "path",
+						"name": "jobSimulationSkillId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The updated data for the job simulation skill",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateJobSimulationSkillInput",
+								"description": "The updated data for the job simulation skill"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteJobSimulationSkill",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Delete a job simulation skill by ID",
+				"tags": [
+					"JobSimulationSkill"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the job simulation skill",
+						"in": "path",
+						"name": "jobSimulationSkillId",
 						"required": true,
 						"schema": {
 							"format": "double",
