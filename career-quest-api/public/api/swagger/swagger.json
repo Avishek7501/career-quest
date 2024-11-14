@@ -7,6 +7,68 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"JobSkill": {
+				"properties": {
+					"JobSkillId": {
+						"type": "number",
+						"format": "double"
+					},
+					"JobCategoryId": {
+						"type": "number",
+						"format": "double"
+					},
+					"SkillName": {
+						"type": "string"
+					},
+					"CreatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"UpdatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"JobSkillId",
+					"JobCategoryId",
+					"SkillName",
+					"CreatedAt",
+					"UpdatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateJobSkillInput": {
+				"properties": {
+					"JobCategoryId": {
+						"type": "number",
+						"format": "double"
+					},
+					"SkillName": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"JobCategoryId",
+					"SkillName"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateJobSkillInput": {
+				"properties": {
+					"JobCategoryId": {
+						"type": "number",
+						"format": "double"
+					},
+					"SkillName": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"JobCategory": {
 				"properties": {
 					"CategoryId": {
@@ -83,6 +145,188 @@
 		"contact": {}
 	},
 	"paths": {
+		"/api/v1/job/skill": {
+			"get": {
+				"operationId": "GetAllJobSkills",
+				"responses": {
+					"200": {
+						"description": "A list of all job skills",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/JobSkill"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all job skills",
+				"tags": [
+					"JobSkill"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateJobSkill",
+				"responses": {
+					"200": {
+						"description": "The created job skill",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobSkill"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new job skill",
+				"tags": [
+					"JobSkill"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The data for the new job skill",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateJobSkillInput",
+								"description": "The data for the new job skill"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/job/skill/{jobSkillId}": {
+			"get": {
+				"operationId": "GetJobSkillById",
+				"responses": {
+					"200": {
+						"description": "The job skill with the specified ID",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobSkill"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a job skill by ID",
+				"tags": [
+					"JobSkill"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the job skill",
+						"in": "path",
+						"name": "jobSkillId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateJobSkill",
+				"responses": {
+					"200": {
+						"description": "The updated job skill",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobSkill"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update a job skill by ID",
+				"tags": [
+					"JobSkill"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the job skill",
+						"in": "path",
+						"name": "jobSkillId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The updated data for the job skill",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateJobSkillInput",
+								"description": "The updated data for the job skill"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteJobSkill",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Delete a job skill by ID",
+				"tags": [
+					"JobSkill"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the job skill",
+						"in": "path",
+						"name": "jobSkillId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/api/v1/job/category": {
 			"get": {
 				"operationId": "GetAllCategories",
