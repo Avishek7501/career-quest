@@ -22,7 +22,7 @@ model User {
   UserFollower_UserFollower_FromUserFollows UserFollower[]   @relation("UserFollower_FromUser")
   UserFollower_UserFollower_ToUserFollows   UserFollower[]   @relation("UserFollower_ToUser")
 
-  ResetPasswordToken                        String?          @unique
+  ResetPasswordToken String? @unique
 
   @@map("User")
 }
@@ -32,8 +32,8 @@ model UserFollower {
   ToUserId   Int
   CreatedAt  DateTime @default(now())
   UpdatedAt  DateTime @updatedAt
-  FromUser   User     @relation("UserFollower_FromUser", fields: [FromUserId], references: [UserId])
-  ToUser     User     @relation("UserFollower_ToUser", fields: [ToUserId], references: [UserId])
+  FromUser   User     @relation("UserFollower_FromUser", fields: [FromUserId], references: [UserId], onDelete: Cascade)
+  ToUser     User     @relation("UserFollower_ToUser", fields: [ToUserId], references: [UserId], onDelete: Cascade)
 
   @@id([FromUserId, ToUserId])
   @@index([ToUserId], map: "UserFollower_ToUserId_fkey")
@@ -47,7 +47,7 @@ model Leaderboard {
   TotalScore    Int
   CreatedAt     DateTime @default(now())
   UpdatedAt     DateTime @updatedAt
-  User          User     @relation(fields: [UserId], references: [UserId])
+  User          User     @relation(fields: [UserId], references: [UserId], onDelete: Cascade)
 
   @@map("Leaderboard")
 }
@@ -58,8 +58,8 @@ model JobApplication {
   UserId           Int
   CreatedAt        DateTime      @default(now())
   UpdatedAt        DateTime      @updatedAt
-  JobSimulation    JobSimulation @relation(fields: [JobSimulationId], references: [JobSimulationId])
-  User             User          @relation(fields: [UserId], references: [UserId])
+  JobSimulation    JobSimulation @relation(fields: [JobSimulationId], references: [JobSimulationId], onDelete: Cascade)
+  User             User          @relation(fields: [UserId], references: [UserId], onDelete: Cascade)
 
   @@index([JobSimulationId], map: "JobApplication_JobSimulationId_fkey")
   @@index([UserId], map: "JobApplication_UserId_fkey")
@@ -75,7 +75,7 @@ model JobSimulation {
   UpdatedAt           DateTime             @updatedAt
   InterviewQuestions  InterviewQuestion[]
   JobApplications     JobApplication[]
-  JobCategory         JobCategory          @relation(fields: [JobCategoryId], references: [CategoryId])
+  JobCategory         JobCategory          @relation(fields: [JobCategoryId], references: [CategoryId], onDelete: Cascade)
   JobSimulationSkills JobSimulationSkill[]
 
   @@index([JobCategoryId], map: "JobSimulation_JobCategoryId_fkey")
@@ -100,8 +100,8 @@ model JobSimulationSkill {
   JobSkillId           Int
   CreatedAt            DateTime      @default(now())
   UpdatedAt            DateTime      @updatedAt
-  JobSimulation        JobSimulation @relation(fields: [JobSimulationId], references: [JobSimulationId])
-  JobSkill             JobSkill      @relation(fields: [JobSkillId], references: [JobSkillId])
+  JobSimulation        JobSimulation @relation(fields: [JobSimulationId], references: [JobSimulationId], onDelete: Cascade)
+  JobSkill             JobSkill      @relation(fields: [JobSkillId], references: [JobSkillId], onDelete: Cascade)
 
   @@index([JobSimulationId], map: "JobSimulationSkill_JobSimulationId_fkey")
   @@index([JobSkillId], map: "JobSimulationSkill_JobSkillId_fkey")
@@ -115,7 +115,7 @@ model JobSkill {
   CreatedAt           DateTime             @default(now())
   UpdatedAt           DateTime             @updatedAt
   JobSimulationSkills JobSimulationSkill[]
-  JobCategory         JobCategory          @relation(fields: [JobCategoryId], references: [CategoryId])
+  JobCategory         JobCategory          @relation(fields: [JobCategoryId], references: [CategoryId], onDelete: Cascade)
 
   @@index([JobCategoryId], map: "JobSkill_JobCategoryId_fkey")
   @@map("JobSkill")
@@ -129,7 +129,7 @@ model InterviewQuestion {
   CreatedAt           DateTime          @default(now())
   UpdatedAt           DateTime          @updatedAt
   InterviewAnswers    InterviewAnswer[]
-  JobSimulation       JobSimulation     @relation(fields: [JobSimulationId], references: [JobSimulationId])
+  JobSimulation       JobSimulation     @relation(fields: [JobSimulationId], references: [JobSimulationId], onDelete: Cascade)
 
   @@index([JobSimulationId], map: "InterviewQuestion_JobSimulationId_fkey")
   @@map("InterviewQuestion")
@@ -142,7 +142,7 @@ model InterviewAnswer {
   IsCorrect           Boolean
   CreatedAt           DateTime          @default(now())
   UpdatedAt           DateTime          @updatedAt
-  InterviewQuestion   InterviewQuestion @relation(fields: [InterviewQuestionId], references: [InterviewQuestionId])
+  InterviewQuestion   InterviewQuestion @relation(fields: [InterviewQuestionId], references: [InterviewQuestionId], onDelete: Cascade)
 
   @@index([InterviewQuestionId], map: "InterviewAnswer_InterviewQuestionId_fkey")
   @@map("InterviewAnswer")
