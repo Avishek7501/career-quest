@@ -22,6 +22,8 @@ model User {
   UserFollower_UserFollower_FromUserFollows UserFollower[]   @relation("UserFollower_FromUser")
   UserFollower_UserFollower_ToUserFollows   UserFollower[]   @relation("UserFollower_ToUser")
 
+  ResetPasswordToken                        String?          @unique
+
   @@map("User")
 }
 
