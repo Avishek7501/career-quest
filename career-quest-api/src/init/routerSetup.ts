@@ -26,9 +26,14 @@ const routerSetup = (app: Express) => {
             // Iterate through each router file and dynamically import and use it
             routerFiles.forEach((routerFile) => {
                 // Extract the route name from the file name (remove "Router.ts" extension)
-                const routeName = path
+                const baseName = path
                     .basename(routerFile, path.extname(routerFile))
                     .replace('Router', '');
+
+                // Convert camel case or Pascal case file names like "JobCategory" into "job/category"
+                const routeName = baseName
+                    .replace(/([a-z])([A-Z])/g, '$1/$2') // Split camel case
+                    .toLowerCase(); // Convert to lowercase
 
                 // Dynamically import the router module
                 // eslint-disable-next-line @typescript-eslint/no-require-imports

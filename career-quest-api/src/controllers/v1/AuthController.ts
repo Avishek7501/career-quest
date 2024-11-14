@@ -42,7 +42,7 @@ export class AuthController {
             { userId: user.UserId },
             environments.JWT_SECRET ?? '',
             {
-                expiresIn: '1h'
+                expiresIn: '30d'
             }
         );
         return { message: 'Logged in successfully', token };

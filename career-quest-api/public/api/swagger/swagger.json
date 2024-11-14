@@ -6,7 +6,72 @@
 		"parameters": {},
 		"requestBodies": {},
 		"responses": {},
-		"schemas": {},
+		"schemas": {
+			"JobCategory": {
+				"properties": {
+					"CategoryId": {
+						"type": "number",
+						"format": "double"
+					},
+					"CategoryName": {
+						"type": "string"
+					},
+					"CreatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"UpdatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"CreatedBy": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					}
+				},
+				"required": [
+					"CategoryId",
+					"CategoryName",
+					"CreatedAt",
+					"UpdatedAt",
+					"CreatedBy"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateJobCategoryInput": {
+				"properties": {
+					"CategoryName": {
+						"type": "string"
+					},
+					"CreatedBy": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					}
+				},
+				"required": [
+					"CategoryName",
+					"CreatedBy"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateJobCategoryInput": {
+				"properties": {
+					"CategoryName": {
+						"type": "string"
+					},
+					"CreatedBy": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
 		"securitySchemes": {}
 	},
 	"info": {
@@ -18,6 +83,188 @@
 		"contact": {}
 	},
 	"paths": {
+		"/api/v1/job/category": {
+			"get": {
+				"operationId": "GetAllCategories",
+				"responses": {
+					"200": {
+						"description": "A list of all job categories",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/JobCategory"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all job categories",
+				"tags": [
+					"JobCategory"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateCategory",
+				"responses": {
+					"200": {
+						"description": "The created job category",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobCategory"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new job category",
+				"tags": [
+					"JobCategory"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The data for the new job category",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateJobCategoryInput",
+								"description": "The data for the new job category"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/job/category/{categoryId}": {
+			"get": {
+				"operationId": "GetCategoryById",
+				"responses": {
+					"200": {
+						"description": "The job category with the specified ID",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobCategory"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a job category by ID",
+				"tags": [
+					"JobCategory"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the category",
+						"in": "path",
+						"name": "categoryId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateCategory",
+				"responses": {
+					"200": {
+						"description": "The updated job category",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobCategory"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update a job category by ID",
+				"tags": [
+					"JobCategory"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the category",
+						"in": "path",
+						"name": "categoryId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The updated data for the category",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateJobCategoryInput",
+								"description": "The updated data for the category"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteCategory",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Delete a job category by ID",
+				"tags": [
+					"JobCategory"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the category",
+						"in": "path",
+						"name": "categoryId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/api/v1/auth/register": {
 			"post": {
 				"operationId": "Register",

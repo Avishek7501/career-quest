@@ -87,7 +87,7 @@ model JobCategory {
   CategoryName   String
   CreatedAt      DateTime        @default(now())
   UpdatedAt      DateTime        @updatedAt
-  CreatedBy      Int
+  CreatedBy      Int?
   JobSimulations JobSimulation[]
   JobSkills      JobSkill[]
 
