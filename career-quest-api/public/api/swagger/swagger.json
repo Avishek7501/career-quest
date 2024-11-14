@@ -69,6 +69,79 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"JobSimulation": {
+				"properties": {
+					"JobSimulationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"JobCategoryId": {
+						"type": "number",
+						"format": "double"
+					},
+					"JobTitle": {
+						"type": "string"
+					},
+					"JobDescription": {
+						"type": "string"
+					},
+					"CreatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"UpdatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"JobSimulationId",
+					"JobCategoryId",
+					"JobTitle",
+					"JobDescription",
+					"CreatedAt",
+					"UpdatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateJobSimulationInput": {
+				"properties": {
+					"JobCategoryId": {
+						"type": "number",
+						"format": "double"
+					},
+					"JobTitle": {
+						"type": "string"
+					},
+					"JobDescription": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"JobCategoryId",
+					"JobTitle",
+					"JobDescription"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateJobSimulationInput": {
+				"properties": {
+					"JobCategoryId": {
+						"type": "number",
+						"format": "double"
+					},
+					"JobTitle": {
+						"type": "string"
+					},
+					"JobDescription": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"JobCategory": {
 				"properties": {
 					"CategoryId": {
@@ -318,6 +391,188 @@
 						"description": "The ID of the job skill",
 						"in": "path",
 						"name": "jobSkillId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/job/simulation": {
+			"get": {
+				"operationId": "GetAllJobSimulations",
+				"responses": {
+					"200": {
+						"description": "A list of all job simulations",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/JobSimulation"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all job simulations",
+				"tags": [
+					"JobSimulation"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateJobSimulation",
+				"responses": {
+					"200": {
+						"description": "The created job simulation",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobSimulation"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new job simulation",
+				"tags": [
+					"JobSimulation"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The data for the new job simulation",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateJobSimulationInput",
+								"description": "The data for the new job simulation"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/job/simulation/{jobSimulationId}": {
+			"get": {
+				"operationId": "GetJobSimulationById",
+				"responses": {
+					"200": {
+						"description": "The job simulation with the specified ID",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobSimulation"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a job simulation by ID",
+				"tags": [
+					"JobSimulation"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the job simulation",
+						"in": "path",
+						"name": "jobSimulationId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateJobSimulation",
+				"responses": {
+					"200": {
+						"description": "The updated job simulation",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobSimulation"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update a job simulation by ID",
+				"tags": [
+					"JobSimulation"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the job simulation",
+						"in": "path",
+						"name": "jobSimulationId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The updated data for the job simulation",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateJobSimulationInput",
+								"description": "The updated data for the job simulation"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteJobSimulation",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Delete a job simulation by ID",
+				"tags": [
+					"JobSimulation"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the job simulation",
+						"in": "path",
+						"name": "jobSimulationId",
 						"required": true,
 						"schema": {
 							"format": "double",
