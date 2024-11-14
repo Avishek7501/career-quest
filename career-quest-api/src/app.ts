@@ -1,14 +1,11 @@
 import cors from 'cors';
-import dotenv from 'dotenv';
 import express, { type Express } from 'express';
 
 import initMiddleware from './middlewares/init';
 import routerSetup from './init/routerSetup';
+import environments from './config/environments';
 
-dotenv.config();
-console.log('Database URL: ', process.env.DATABASE_URL);
-
-const APP_PORT = process.env.PORT ?? 8000;
+const APP_PORT = environments.APP_PORT;
 
 const app: Express = express();
 

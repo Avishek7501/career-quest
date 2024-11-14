@@ -2,6 +2,8 @@ import { Express } from 'express';
 import fs from 'fs';
 import path from 'path';
 
+import { authMiddleware } from '../middlewares/auth';
+
 const routerSetup = (app: Express) => {
     // Define the directory where your routers are located
     const baseRoutersDirectory = path.join(__dirname, '../routers');
@@ -38,11 +40,17 @@ const routerSetup = (app: Express) => {
                     `Mounting ${versionDirectory}/${routeName} router...`
                 );
 
-                // Mount the router with the generated API URL
-                app.use(
-                    `/api/${versionDirectory}/${routeName}`,
-                    versionedRouter
-                );
+                // Determine the base path for this route
+                const routePath = `/api/${versionDirectory}/${routeName}`;
+
+                // Check if the router is for "auth" (case-insensitive)
+                if (routerFile.toLowerCase().includes('auth')) {
+                    // Mount without authMiddleware (public route)
+                    app.use(routePath, versionedRouter);
+                } else {
+                    // Mount with authMiddleware (protected route)
+                    app.use(routePath, authMiddleware, versionedRouter);
+                }
             });
         }
     });
