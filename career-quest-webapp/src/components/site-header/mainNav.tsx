@@ -1,9 +1,28 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '../ui/button';
-import { navigationLinks } from './navigations';
+import { loggedinNavigationLinks, navigationLinks } from './navigations';
 import Image from 'next/image';
+import { useAuth } from '@/hooks/use-auth';
+import { useLogoutMutation } from '@/store/auth/api';
 
 export default function MainNav() {
+    const auth = useAuth();
+
+    const [logout] = useLogoutMutation();
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            localStorage.removeItem('authToken'); // Clear the token from localStorage
+            window.location.reload();
+        } catch (error: any) {
+            console.error('Logout failed', error);
+            alert(error.data?.message || 'Logout failed');
+        }
+    };
+
     return (
         <div className="mr-4 hidden gap-2 md:flex md:justify-between w-full">
             <Link href="/">
@@ -15,7 +34,10 @@ export default function MainNav() {
                 />
             </Link>
             <div>
-                {navigationLinks.map((item, index) => (
+                {(auth.isLoggedIn
+                    ? loggedinNavigationLinks
+                    : navigationLinks
+                ).map((item, index) => (
                     <Button
                         key={index}
                         variant="default"
@@ -26,6 +48,11 @@ export default function MainNav() {
                         </Link>
                     </Button>
                 ))}
+                {auth.isLoggedIn && (
+                    <Button variant="destructive" onClick={handleLogout}>
+                        Log out
+                    </Button>
+                )}
             </div>
         </div>
     );

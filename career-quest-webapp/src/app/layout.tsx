@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import './globals.css';
 import SiteHeader from '@/components/site-header';
+import ReduxProvider from '@/components/hocs/redux-provider';
 
 const geistSans = localFont({
     src: './fonts/GeistVF.woff',
@@ -29,8 +30,21 @@ export default function RootLayout({
             <body
                 className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen flex-col`}
             >
-                <SiteHeader />
-                {children}
+                <ReduxProvider>
+                    <SiteHeader />
+                    <div className="flex flex-col w-full min-h-[calc(100vh-192px)]">
+                        {children}
+                    </div>
+                    {/* Footer */}
+                    <footer className="w-full bg-blue-800 text-white py-4 h-28 flex items-center">
+                        <div className="max-w-screen-xl mx-auto px-4 flex flex-col items-center text-center">
+                            <div className="font-semibold text-lg">Guhuza</div>
+                            <p className="text-sm mt-1">
+                                Copyright ©2024 Guhuza
+                            </p>
+                        </div>
+                    </footer>
+                </ReduxProvider>
             </body>
         </html>
     );
