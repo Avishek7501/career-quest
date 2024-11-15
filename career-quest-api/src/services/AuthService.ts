@@ -5,11 +5,14 @@ import bcrypt from 'bcrypt';
 import environments from '../config/environments';
 import UserService from './UserService';
 
+// Temporary in-memory token blacklist (consider using Redis or a DB for production)
+const tokenBlacklist = new Set<string>();
+
 class AuthService {
     // Generate JWT token
     static generateToken(userId: number): string {
         return jwt.sign({ userId }, environments.JWT_SECRET ?? '', {
-            expiresIn: '30d'
+            expiresIn: '5m'
         });
     }
 
@@ -19,6 +22,10 @@ class AuthService {
         token?: string;
         userId?: number;
     } {
+        if (tokenBlacklist.has(token)) {
+            return { valid: false };
+        }
+
         try {
             const decoded = jwt.verify(
                 token,
@@ -52,6 +59,12 @@ class AuthService {
         }
         const token = this.generateToken(user.UserId);
         return { message: 'Logged in successfully', token };
+    }
+
+    // Logout function by adding token to the blacklist
+    static logout(token: string): { message: string } {
+        tokenBlacklist.add(token);
+        return { message: 'Logged out successfully' };
     }
 }
 

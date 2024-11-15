@@ -58,4 +58,21 @@ authRouter.get('/profile/:userId', async (req, res) => {
     }
 });
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+authRouter.post('/logout', async (req: Request, res: Response) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res
+                .status(401)
+                .json({ message: 'Authorization header is missing' });
+        }
+        const response = await authController.logout(authHeader);
+        res.json(response);
+    } catch (error) {
+        res.status(400).json({ message: (error as Error).message });
+    }
+});
+
 export default authRouter;

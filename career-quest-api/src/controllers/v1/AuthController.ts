@@ -60,4 +60,11 @@ export class AuthController {
             user
         };
     }
+
+    @Post('/logout')
+    async logout(@Header('Authorization') authHeader?: string) {
+        if (!authHeader) throw new Error('Authorization header is missing');
+        const token = authHeader.split(' ')[1];
+        return AuthService.logout(token);
+    }
 }
