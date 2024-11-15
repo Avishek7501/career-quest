@@ -18,7 +18,15 @@ export class LeaderboardService {
     }
 
     static async getAllLeaderboards(): Promise<Leaderboard[]> {
-        return prisma.leaderboard.findMany();
+        return prisma.leaderboard.findMany({
+            include: {
+                User: {
+                    select: {
+                        Username: true // Include only the Username field
+                    }
+                }
+            }
+        });
     }
 
     static async createLeaderboard(

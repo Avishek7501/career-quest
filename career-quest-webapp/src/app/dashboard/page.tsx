@@ -31,7 +31,7 @@ export default function Dashboard() {
                     <h3 className="font-bold mb-2">Global Leaderboard</h3>
                     {leaderboards?.map((leader) => (
                         <p key={leader.LeaderboardId}>
-                            {leader.UserId} - {leader.TotalScore}
+                            {leader.User.Username} - {leader.TotalScore}
                         </p>
                     ))}
                 </div>
@@ -86,10 +86,9 @@ export default function Dashboard() {
                 </div>
                 <div className="w-1/4 bg-blue-800 p-4 text-white">
                     <h3 className="font-bold mb-2">Friends</h3>
-                    {/* Display friend list */}
-                    <button className="bg-black text-white p-2 rounded-lg">
+                    {/* <button className="bg-black text-white p-2 rounded-lg">
                         Refer a Friend
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </div>
