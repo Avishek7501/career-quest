@@ -270,6 +270,71 @@
 				},
 				"type": "object",
 				"additionalProperties": false
+			},
+			"JobApplication": {
+				"properties": {
+					"JobApplicationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"JobSimulationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"UserId": {
+						"type": "number",
+						"format": "double"
+					},
+					"CreatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"UpdatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"JobApplicationId",
+					"JobSimulationId",
+					"UserId",
+					"CreatedAt",
+					"UpdatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateJobApplicationInput": {
+				"properties": {
+					"JobSimulationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"UserId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"JobSimulationId",
+					"UserId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateJobApplicationInput": {
+				"properties": {
+					"JobSimulationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"UserId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -1002,6 +1067,188 @@
 						"description": "The ID of the category",
 						"in": "path",
 						"name": "categoryId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/job/application": {
+			"get": {
+				"operationId": "GetAllJobApplications",
+				"responses": {
+					"200": {
+						"description": "A list of all job applications",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/JobApplication"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all job applications",
+				"tags": [
+					"JobApplication"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateJobApplication",
+				"responses": {
+					"200": {
+						"description": "The created job application",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobApplication"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new job application",
+				"tags": [
+					"JobApplication"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The data for the new job application",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateJobApplicationInput",
+								"description": "The data for the new job application"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/job/application/{jobApplicationId}": {
+			"get": {
+				"operationId": "GetJobApplicationById",
+				"responses": {
+					"200": {
+						"description": "The job application with the specified ID",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobApplication"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a job application by ID",
+				"tags": [
+					"JobApplication"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the job application",
+						"in": "path",
+						"name": "jobApplicationId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateJobApplication",
+				"responses": {
+					"200": {
+						"description": "The updated job application",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JobApplication"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update a job application by ID",
+				"tags": [
+					"JobApplication"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the job application",
+						"in": "path",
+						"name": "jobApplicationId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The updated data for the job application",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateJobApplicationInput",
+								"description": "The updated data for the job application"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteJobApplication",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Delete a job application by ID",
+				"tags": [
+					"JobApplication"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the job application",
+						"in": "path",
+						"name": "jobApplicationId",
 						"required": true,
 						"schema": {
 							"format": "double",
