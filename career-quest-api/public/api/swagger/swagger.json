@@ -7,6 +7,52 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"UserFollower": {
+				"properties": {
+					"FromUserId": {
+						"type": "number",
+						"format": "double"
+					},
+					"ToUserId": {
+						"type": "number",
+						"format": "double"
+					},
+					"CreatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"UpdatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"FromUserId",
+					"ToUserId",
+					"CreatedAt",
+					"UpdatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateUserFollowerInput": {
+				"properties": {
+					"FromUserId": {
+						"type": "number",
+						"format": "double"
+					},
+					"ToUserId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"FromUserId",
+					"ToUserId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"Leaderboard": {
 				"properties": {
 					"LeaderboardId": {
@@ -569,6 +615,214 @@
 		"contact": {}
 	},
 	"paths": {
+		"/api/v1/user/follower/{fromUserId}/{toUserId}": {
+			"get": {
+				"operationId": "GetUserFollower",
+				"responses": {
+					"200": {
+						"description": "The follower relationship between the two users, if it exists",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserFollower"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a follower relationship between two users",
+				"tags": [
+					"UserFollower"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the user who is following",
+						"in": "path",
+						"name": "fromUserId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "The ID of the user being followed",
+						"in": "path",
+						"name": "toUserId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"delete": {
+				"operationId": "DeleteUserFollower",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Delete a follower relationship between two users",
+				"tags": [
+					"UserFollower"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the user who is following",
+						"in": "path",
+						"name": "fromUserId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"description": "The ID of the user being followed",
+						"in": "path",
+						"name": "toUserId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/user/follower/followers/{toUserId}": {
+			"get": {
+				"operationId": "GetFollowersOfUser",
+				"responses": {
+					"200": {
+						"description": "A list of followers of the specified user",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/UserFollower"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all followers of a user",
+				"tags": [
+					"UserFollower"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the user being followed",
+						"in": "path",
+						"name": "toUserId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/user/follower/following/{fromUserId}": {
+			"get": {
+				"operationId": "GetFollowingOfUser",
+				"responses": {
+					"200": {
+						"description": "A list of users that the specified user is following",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/UserFollower"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all users followed by a user",
+				"tags": [
+					"UserFollower"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the user who is following",
+						"in": "path",
+						"name": "fromUserId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/user/follower": {
+			"post": {
+				"operationId": "CreateUserFollower",
+				"responses": {
+					"200": {
+						"description": "The created follower relationship",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UserFollower"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a follower relationship between two users",
+				"tags": [
+					"UserFollower"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The data for the new follower relationship",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserFollowerInput",
+								"description": "The data for the new follower relationship"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/api/v1/leaderboard": {
 			"get": {
 				"operationId": "GetAllLeaderboards",
