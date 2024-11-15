@@ -7,12 +7,14 @@ import environments from '../configs/environments';
 import { RESET_STATE_ACTION_TYPE } from './actions/resetState';
 import { authApi } from './auth/api';
 import authSlice from './auth/slice';
+import { api } from './api/api';
 
-const middlewares = [authApi.middleware];
+const middlewares = [authApi.middleware, api.middleware];
 
 const reducers = {
     [authSlice.reducerPath]: authSlice.reducer,
-    [authApi.reducerPath]: authApi.reducer
+    [authApi.reducerPath]: authApi.reducer,
+    [api.reducerPath]: api.reducer
 };
 
 const combinedReducer = combineReducers<typeof reducers>(reducers);

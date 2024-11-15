@@ -328,6 +328,94 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"SimulationStartData": {
+				"properties": {
+					"simulation": {
+						"properties": {
+							"skills": {
+								"items": {
+									"type": "string"
+								},
+								"type": "array"
+							},
+							"category": {
+								"type": "string"
+							},
+							"description": {
+								"type": "string"
+							},
+							"title": {
+								"type": "string"
+							},
+							"id": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"skills",
+							"category",
+							"description",
+							"title",
+							"id"
+						],
+						"type": "object"
+					},
+					"questions": {
+						"items": {
+							"properties": {
+								"answers": {
+									"items": {
+										"properties": {
+											"isCorrect": {
+												"type": "boolean"
+											},
+											"answerText": {
+												"type": "string"
+											},
+											"answerId": {
+												"type": "number",
+												"format": "double"
+											}
+										},
+										"required": [
+											"isCorrect",
+											"answerText",
+											"answerId"
+										],
+										"type": "object"
+									},
+									"type": "array"
+								},
+								"questionType": {
+									"type": "string"
+								},
+								"questionText": {
+									"type": "string"
+								},
+								"questionId": {
+									"type": "number",
+									"format": "double"
+								}
+							},
+							"required": [
+								"answers",
+								"questionType",
+								"questionText",
+								"questionId"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"simulation",
+					"questions"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"JobCategory": {
 				"properties": {
 					"CategoryId": {
@@ -1542,6 +1630,42 @@
 						"description": "The ID of the job simulation",
 						"in": "path",
 						"name": "jobSimulationId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/job/simulation/{simulationId}/start": {
+			"get": {
+				"operationId": "StartSimulation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SimulationStartData"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"JobSimulation"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "simulationId",
 						"required": true,
 						"schema": {
 							"format": "double",

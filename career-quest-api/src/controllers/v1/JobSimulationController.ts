@@ -14,7 +14,8 @@ import { JobSimulationService } from '../../services/JobSimulationService';
 import {
     JobSimulation,
     CreateJobSimulationInput,
-    UpdateJobSimulationInput
+    UpdateJobSimulationInput,
+    SimulationStartData
 } from '../../types/JobSimulationTypes';
 
 @Tags('JobSimulation')
@@ -81,5 +82,15 @@ export class JobSimulationController {
     @Delete('/{jobSimulationId}')
     async deleteJobSimulation(@Path() jobSimulationId: number): Promise<void> {
         await JobSimulationService.deleteJobSimulation(jobSimulationId);
+    }
+
+    @Get('/{simulationId}/start')
+    async startSimulation(
+        @Path() simulationId: number
+    ): Promise<SimulationStartData> {
+        const simulationData =
+            await JobSimulationService.startSimulation(simulationId);
+        if (!simulationData) throw new Error('JobSimulation not found');
+        return simulationData;
     }
 }

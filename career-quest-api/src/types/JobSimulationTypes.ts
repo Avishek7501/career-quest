@@ -20,3 +20,23 @@ export interface UpdateJobSimulationInput {
     JobTitle?: string;
     JobDescription?: string;
 }
+
+export interface SimulationStartData {
+    simulation: {
+        id: number;
+        title: string;
+        description: string;
+        category: string;
+        skills: string[];
+    };
+    questions: {
+        questionId: number;
+        questionText: string;
+        questionType: string;
+        answers: {
+            answerId: number;
+            answerText: string;
+            isCorrect: boolean;
+        }[];
+    }[];
+}

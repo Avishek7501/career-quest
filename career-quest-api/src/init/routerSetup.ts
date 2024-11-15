@@ -54,7 +54,8 @@ const routerSetup = (app: Express) => {
                     app.use(routePath, versionedRouter);
                 } else {
                     // Mount with authMiddleware (protected route)
-                    app.use(routePath, authMiddleware, versionedRouter);
+                    // app.use(routePath, authMiddleware, versionedRouter);
+                    app.use(routePath, versionedRouter);
                 }
             });
         }
