@@ -7,6 +7,81 @@
 		"requestBodies": {},
 		"responses": {},
 		"schemas": {
+			"Leaderboard": {
+				"properties": {
+					"LeaderboardId": {
+						"type": "number",
+						"format": "double"
+					},
+					"UserId": {
+						"type": "number",
+						"format": "double"
+					},
+					"CurrentScore": {
+						"type": "number",
+						"format": "double"
+					},
+					"TotalScore": {
+						"type": "number",
+						"format": "double"
+					},
+					"CreatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"UpdatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"LeaderboardId",
+					"UserId",
+					"CurrentScore",
+					"TotalScore",
+					"CreatedAt",
+					"UpdatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateLeaderboardInput": {
+				"properties": {
+					"UserId": {
+						"type": "number",
+						"format": "double"
+					},
+					"CurrentScore": {
+						"type": "number",
+						"format": "double"
+					},
+					"TotalScore": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"UserId",
+					"CurrentScore",
+					"TotalScore"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateLeaderboardInput": {
+				"properties": {
+					"CurrentScore": {
+						"type": "number",
+						"format": "double"
+					},
+					"TotalScore": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
 			"JobSkill": {
 				"properties": {
 					"JobSkillId": {
@@ -494,6 +569,188 @@
 		"contact": {}
 	},
 	"paths": {
+		"/api/v1/leaderboard": {
+			"get": {
+				"operationId": "GetAllLeaderboards",
+				"responses": {
+					"200": {
+						"description": "A list of all leaderboards",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/Leaderboard"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all leaderboards",
+				"tags": [
+					"Leaderboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateLeaderboard",
+				"responses": {
+					"200": {
+						"description": "The created leaderboard entry",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Leaderboard"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new leaderboard entry",
+				"tags": [
+					"Leaderboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The data for the new leaderboard entry",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateLeaderboardInput",
+								"description": "The data for the new leaderboard entry"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/leaderboard/{leaderboardId}": {
+			"get": {
+				"operationId": "GetLeaderboardById",
+				"responses": {
+					"200": {
+						"description": "The leaderboard with the specified ID",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Leaderboard"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get a leaderboard by ID",
+				"tags": [
+					"Leaderboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the leaderboard",
+						"in": "path",
+						"name": "leaderboardId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateLeaderboard",
+				"responses": {
+					"200": {
+						"description": "The updated leaderboard entry",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Leaderboard"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update a leaderboard entry by ID",
+				"tags": [
+					"Leaderboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the leaderboard entry",
+						"in": "path",
+						"name": "leaderboardId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The updated data for the leaderboard entry",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateLeaderboardInput",
+								"description": "The updated data for the leaderboard entry"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteLeaderboard",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Delete a leaderboard entry by ID",
+				"tags": [
+					"Leaderboard"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the leaderboard entry",
+						"in": "path",
+						"name": "leaderboardId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
 		"/api/v1/job/skill": {
 			"get": {
 				"operationId": "GetAllJobSkills",
