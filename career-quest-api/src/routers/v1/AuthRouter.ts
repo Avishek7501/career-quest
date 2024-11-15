@@ -1,5 +1,5 @@
 // src/routes/v1/authRoutes.ts
-import { Router } from 'express';
+import { Router, type Request, type Response } from 'express';
 
 import { AuthController } from '../../controllers/v1/AuthController';
 
@@ -25,6 +25,16 @@ authRouter.post('/login', async (req, res) => {
         // Cast error to Error type
         const errorMessage = (error as Error).message;
         res.status(400).json({ message: errorMessage });
+    }
+});
+
+authRouter.get('/status', async (req: Request, res: Response) => {
+    try {
+        const authHeader = req.headers.authorization;
+        const response = await authController.checkLoginStatus(authHeader);
+        res.json(response);
+    } catch (error) {
+        res.status(401).json({ message: (error as Error).message });
     }
 });
 

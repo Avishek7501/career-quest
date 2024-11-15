@@ -1,10 +1,8 @@
-import { Security } from 'tsoa';
+import { Header, Security } from 'tsoa';
 import { Route, Tags, Get, Post, Body, Path } from 'tsoa';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
 
+import AuthService from '../../services/AuthService';
 import UserService from '../../services/UserService';
-import environments from '../../config/environments';
 
 @Tags('Auth')
 @Route('/api/v1/auth')
@@ -33,19 +31,7 @@ export class AuthController {
     async login(
         @Body() { email, password }: { email: string; password: string }
     ) {
-        const user = await UserService.getUserByEmail(email);
-        if (!user || !(await bcrypt.compare(password, user.Password))) {
-            throw new Error('Invalid credentials');
-        }
-
-        const token = jwt.sign(
-            { userId: user.UserId },
-            environments.JWT_SECRET ?? '',
-            {
-                expiresIn: '30d'
-            }
-        );
-        return { message: 'Logged in successfully', token };
+        return await AuthService.login(email, password);
     }
 
     @Get('/profile/{userId}')
@@ -54,5 +40,24 @@ export class AuthController {
         const user = await UserService.getUserById(userId);
         if (!user) throw new Error('User not found');
         return user;
+    }
+
+    @Get('/status')
+    async checkLoginStatus(@Header('Authorization') authHeader?: string) {
+        if (!authHeader) throw new Error('Authorization header is missing');
+        const token = authHeader.split(' ')[1];
+        const {
+            valid,
+            token: newToken,
+            userId
+        } = AuthService.verifyToken(token);
+        if (!valid) throw new Error('Invalid or expired token');
+        const user = await UserService.getUserById(userId!);
+        if (!user) throw new Error('User not found');
+        return {
+            message: 'User is authenticated',
+            token: newToken ?? token,
+            user
+        };
     }
 }
