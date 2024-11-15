@@ -335,6 +335,79 @@
 				},
 				"type": "object",
 				"additionalProperties": false
+			},
+			"InterviewQuestion": {
+				"properties": {
+					"InterviewQuestionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"JobSimulationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"QuestionText": {
+						"type": "string"
+					},
+					"QuestionType": {
+						"type": "string"
+					},
+					"CreatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"UpdatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"InterviewQuestionId",
+					"JobSimulationId",
+					"QuestionText",
+					"QuestionType",
+					"CreatedAt",
+					"UpdatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateInterviewQuestionInput": {
+				"properties": {
+					"JobSimulationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"QuestionText": {
+						"type": "string"
+					},
+					"QuestionType": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"JobSimulationId",
+					"QuestionText",
+					"QuestionType"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateInterviewQuestionInput": {
+				"properties": {
+					"JobSimulationId": {
+						"type": "number",
+						"format": "double"
+					},
+					"QuestionText": {
+						"type": "string"
+					},
+					"QuestionType": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -1249,6 +1322,188 @@
 						"description": "The ID of the job application",
 						"in": "path",
 						"name": "jobApplicationId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/interview/question": {
+			"get": {
+				"operationId": "GetAllInterviewQuestions",
+				"responses": {
+					"200": {
+						"description": "A list of all interview questions",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/InterviewQuestion"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all interview questions",
+				"tags": [
+					"InterviewQuestion"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateInterviewQuestion",
+				"responses": {
+					"200": {
+						"description": "The created interview question",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InterviewQuestion"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new interview question",
+				"tags": [
+					"InterviewQuestion"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The data for the new interview question",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateInterviewQuestionInput",
+								"description": "The data for the new interview question"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/interview/question/{interviewQuestionId}": {
+			"get": {
+				"operationId": "GetInterviewQuestionById",
+				"responses": {
+					"200": {
+						"description": "The interview question with the specified ID",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InterviewQuestion"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get an interview question by ID",
+				"tags": [
+					"InterviewQuestion"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the interview question",
+						"in": "path",
+						"name": "interviewQuestionId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateInterviewQuestion",
+				"responses": {
+					"200": {
+						"description": "The updated interview question",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InterviewQuestion"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update an interview question by ID",
+				"tags": [
+					"InterviewQuestion"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the interview question",
+						"in": "path",
+						"name": "interviewQuestionId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The updated data for the interview question",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateInterviewQuestionInput",
+								"description": "The updated data for the interview question"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteInterviewQuestion",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Delete an interview question by ID",
+				"tags": [
+					"InterviewQuestion"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the interview question",
+						"in": "path",
+						"name": "interviewQuestionId",
 						"required": true,
 						"schema": {
 							"format": "double",
