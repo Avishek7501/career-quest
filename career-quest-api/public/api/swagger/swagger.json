@@ -408,6 +408,79 @@
 				},
 				"type": "object",
 				"additionalProperties": false
+			},
+			"InterviewAnswer": {
+				"properties": {
+					"InterviewAnswerId": {
+						"type": "number",
+						"format": "double"
+					},
+					"InterviewQuestionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"Answer": {
+						"type": "string"
+					},
+					"IsCorrect": {
+						"type": "boolean"
+					},
+					"CreatedAt": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"UpdatedAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"InterviewAnswerId",
+					"InterviewQuestionId",
+					"Answer",
+					"IsCorrect",
+					"CreatedAt",
+					"UpdatedAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateInterviewAnswerInput": {
+				"properties": {
+					"InterviewQuestionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"Answer": {
+						"type": "string"
+					},
+					"IsCorrect": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"InterviewQuestionId",
+					"Answer",
+					"IsCorrect"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateInterviewAnswerInput": {
+				"properties": {
+					"InterviewQuestionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"Answer": {
+						"type": "string"
+					},
+					"IsCorrect": {
+						"type": "boolean"
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {}
@@ -1504,6 +1577,188 @@
 						"description": "The ID of the interview question",
 						"in": "path",
 						"name": "interviewQuestionId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/interview/answer": {
+			"get": {
+				"operationId": "GetAllInterviewAnswers",
+				"responses": {
+					"200": {
+						"description": "A list of all interview answers",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/InterviewAnswer"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get all interview answers",
+				"tags": [
+					"InterviewAnswer"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateInterviewAnswer",
+				"responses": {
+					"200": {
+						"description": "The created interview answer",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InterviewAnswer"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new interview answer",
+				"tags": [
+					"InterviewAnswer"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "The data for the new interview answer",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateInterviewAnswerInput",
+								"description": "The data for the new interview answer"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/v1/interview/answer/{interviewAnswerId}": {
+			"get": {
+				"operationId": "GetInterviewAnswerById",
+				"responses": {
+					"200": {
+						"description": "The interview answer with the specified ID",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InterviewAnswer"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get an interview answer by ID",
+				"tags": [
+					"InterviewAnswer"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the interview answer",
+						"in": "path",
+						"name": "interviewAnswerId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateInterviewAnswer",
+				"responses": {
+					"200": {
+						"description": "The updated interview answer",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InterviewAnswer"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update an interview answer by ID",
+				"tags": [
+					"InterviewAnswer"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the interview answer",
+						"in": "path",
+						"name": "interviewAnswerId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "The updated data for the interview answer",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateInterviewAnswerInput",
+								"description": "The updated data for the interview answer"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteInterviewAnswer",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Delete an interview answer by ID",
+				"tags": [
+					"InterviewAnswer"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "The ID of the interview answer",
+						"in": "path",
+						"name": "interviewAnswerId",
 						"required": true,
 						"schema": {
 							"format": "double",
