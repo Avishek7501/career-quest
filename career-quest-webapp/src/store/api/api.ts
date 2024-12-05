@@ -106,9 +106,9 @@ export const api = createApi({
         }),
 
         // Account Management
-        getProfile: builder.query<any, void>({
-            query: () => ({
-                url: `/auth/profile/me`,
+        getProfile: builder.query<any, string | number>({
+            query: (userId) => ({
+                url: `/auth/profile/${userId}`,
                 method: 'GET'
             }),
             providesTags: [API_TAG_TYPES, AUTH_REFRESH_TAG, AUTH_TAG_TYPES]

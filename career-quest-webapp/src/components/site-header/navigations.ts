@@ -5,5 +5,5 @@ export const navigationLinks = [
 
 export const loggedinNavigationLinks = [
     { href: '/dashboard', displayName: 'Dashboard' },
-    { href: '/account', displayName: 'Account Management' }
+    { href: '/account', displayName: 'Account' }
 ];
