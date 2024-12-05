@@ -1,9 +1,76 @@
 // src/routes/v1/leaderboardRoutes.ts
 import { Router, Request, Response } from 'express';
 import { LeaderboardController } from '../../controllers/v1/LeaderboardController';
+import { PrismaClient } from '@prisma/client';
 
 const leaderboardRouter = Router();
 const leaderboardController = new LeaderboardController();
+
+const prisma = new PrismaClient();
+
+export const updateLeaderboard = async (req: Request, res: Response) => {
+    try {
+        console.log(req.body);
+        const { userId, questionId, selectedAnswerId } = req.body;
+
+        // Fetch the question and validate the answer
+        const question = await prisma.interviewQuestion.findUnique({
+            where: { InterviewQuestionId: questionId },
+            include: { InterviewAnswers: true }
+        });
+
+        if (!question) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        const selectedAnswer = question.InterviewAnswers.find(
+            (answer) => answer.InterviewAnswerId === selectedAnswerId
+        );
+
+        if (!selectedAnswer) {
+            return res.status(400).json({ message: 'Invalid answer selected' });
+        }
+
+        const isCorrect = selectedAnswer.IsCorrect;
+
+        // Calculate the score (e.g., 1 point for correct, 0 for incorrect)
+        const currentScore = isCorrect ? 1 : 0;
+
+        // Fetch the user's current leaderboard entry
+        const leaderboardEntry = await prisma.leaderboard.findUnique({
+            where: { UserId: userId }
+        });
+
+        if (!leaderboardEntry) {
+            // If no leaderboard entry exists, create one
+            await prisma.leaderboard.create({
+                data: {
+                    UserId: userId,
+                    CurrentScore: currentScore,
+                    TotalScore: currentScore // Initial score
+                }
+            });
+        } else {
+            // Update the existing leaderboard entry
+            await prisma.leaderboard.update({
+                where: { LeaderboardId: leaderboardEntry.LeaderboardId },
+                data: {
+                    CurrentScore: currentScore,
+                    TotalScore: leaderboardEntry.TotalScore + currentScore
+                }
+            });
+        }
+
+        return res.status(200).json({
+            message: isCorrect
+                ? 'Correct answer! Score updated.'
+                : 'Incorrect answer. Better luck next time!'
+        });
+    } catch (error) {
+        console.error('Error updating leaderboard:', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
 
 // GET all leaderboard entries
 leaderboardRouter.get('/', async (req: Request, res: Response) => {
@@ -101,5 +168,9 @@ leaderboardRouter.delete(
         }
     }
 );
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+leaderboardRouter.post('/score/update', updateLeaderboard);
 
 export default leaderboardRouter;

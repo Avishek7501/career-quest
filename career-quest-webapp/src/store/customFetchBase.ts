@@ -54,7 +54,6 @@ const customFetchBase: BaseQueryFn<
                     // window.location.href = '/login';
                 }
             } finally {
-                // release must be called once the mutex should be released again.
                 release();
             }
         } else {

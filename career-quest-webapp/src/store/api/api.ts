@@ -25,7 +25,8 @@ export const api = createApi({
     endpoints: (builder) => ({
         // Leaderboard CRUD
         getLeaderboards: builder.query<any[], void>({
-            query: () => ({ url: '/leaderboard', method: 'GET' })
+            query: () => ({ url: '/leaderboard', method: 'GET' }),
+            providesTags: [API_TAG_TYPES]
         }),
         getLeaderboard: builder.query<any, number>({
             query: (id) => ({ url: `/leaderboard/${id}`, method: 'GET' })
@@ -36,6 +37,14 @@ export const api = createApi({
                 method: 'PATCH',
                 body: data
             })
+        }),
+        updateLeaderboardScore: builder.mutation<any, any>({
+            query: (data) => ({
+                url: '/leaderboard/score/update',
+                method: 'POST',
+                body: data
+            }),
+            invalidatesTags: [API_TAG_TYPES]
         }),
 
         // JobApplication CRUD
@@ -87,6 +96,44 @@ export const api = createApi({
 
         getStartSimulation: builder.query<any, number>({
             query: (simulationId) => `/job/simulation/${simulationId}/start`
+        }),
+
+        // Account Management
+        getProfile: builder.query<any, void>({
+            query: () => ({
+                url: `/auth/profile/me`,
+                method: 'GET'
+            })
+            //providesTags: ['UserProfile'] // Add tag for cache handling
+        }),
+        updateProfile: builder.mutation<any, any>({
+            query: (profileData) => ({
+                url: `/auth/profile/me`,
+                method: 'PUT',
+                body: profileData
+            })
+            //invalidatesTags: ['UserProfile'] // Invalidate cache to reflect updates
+        }),
+        updatePassword: builder.mutation<any, any>({
+            query: (passwordData) => ({
+                url: `/auth/password`,
+                method: 'PUT',
+                body: passwordData
+            })
+        }),
+        logout: builder.mutation<void, void>({
+            query: () => ({
+                url: `/auth/logout`,
+                method: 'POST'
+            }),
+            onQueryStarted: async (args, { queryFulfilled }) => {
+                try {
+                    await queryFulfilled;
+                    localStorage.removeItem('authToken'); // Clear token on logout
+                } catch (error) {
+                    console.error('Logout failed', error);
+                }
+            }
         })
     })
 });
@@ -102,5 +149,10 @@ export const {
     useGetJobSkillsQuery,
     useGetInterviewQuestionsQuery,
     useGetInterviewAnswersQuery,
-    useGetStartSimulationQuery
+    useUpdateLeaderboardScoreMutation,
+    useGetStartSimulationQuery,
+    useGetProfileQuery,
+    useUpdateProfileMutation,
+    useUpdatePasswordMutation,
+    useLogoutMutation
 } = api;

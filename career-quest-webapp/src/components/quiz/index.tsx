@@ -1,14 +1,32 @@
 'use client';
 
-import { useGetStartSimulationQuery } from '@/store/api/api';
-import React, { useEffect, useState } from 'react';
+import { cn } from '@/lib/utils';
+import {
+    useGetStartSimulationQuery,
+    useUpdateLeaderboardScoreMutation
+} from '@/store/api/api';
+import { useGetStatusQuery } from '@/store/auth/api';
+import React, { useState } from 'react';
 
-const QuizComponent = ({ simulationId }: { simulationId: number }) => {
+interface QuizComponentProps {
+    simulationId: number;
+    onQuizComplete: (score: number) => void; // Callback for quiz completion
+}
+
+const QuizComponent = ({
+    simulationId,
+    onQuizComplete
+}: QuizComponentProps) => {
     const {
         data: simulationData,
         isLoading,
         error
     } = useGetStartSimulationQuery(simulationId);
+
+    const { data: user, isLoading: isUserLoading } = useGetStatusQuery();
+
+    const [updateLeaderboardScore] = useUpdateLeaderboardScoreMutation();
+
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswers, setSelectedAnswers] = useState<
         Record<number, number>
@@ -16,12 +34,7 @@ const QuizComponent = ({ simulationId }: { simulationId: number }) => {
     const [score, setScore] = useState(0);
     const [quizComplete, setQuizComplete] = useState(false);
 
-    // // Fetch simulation data when the component is mounted
-    // useEffect(() => {
-    //     startSimulation(simulationId);
-    // }, [simulationId, startSimulation]);
-
-    console.log(simulationData);
+    const currentQuestion = simulationData?.questions[currentQuestionIndex];
 
     // Handle answer selection
     const handleAnswerSelect = (questionId: number, answerIndex: number) => {
@@ -39,15 +52,33 @@ const QuizComponent = ({ simulationId }: { simulationId: number }) => {
         }
     };
 
-    const handleNextQuestion = () => {
+    const handleNextQuestion = async () => {
+        // updateLeaderboardScore({user, currentQuestion.questionId, })
         if (currentQuestionIndex < simulationData.questions.length - 1) {
             setCurrentQuestionIndex((prev) => prev + 1);
         } else {
             setQuizComplete(true); // Quiz is complete
+            onQuizComplete(score); // Invoke the callback with the final score
         }
+
+        console.log(user);
+
+        const userId = user?.user?.UserId;
+        const selectedAnswerIndex = selectedAnswers[currentQuestion.questionId];
+        const selectedAnswer = currentQuestion.answers.at(selectedAnswerIndex);
+
+        console.log(userId, selectedAnswerIndex, selectedAnswer);
+        const requestObj = {
+            userId,
+            questionId: currentQuestion.questionId,
+            selectedAnswerId: selectedAnswer.answerId
+        };
+
+        console.log(requestObj);
+        await updateLeaderboardScore(requestObj);
     };
 
-    if (isLoading) return <p>Loading Simulation...</p>;
+    if (isLoading || isUserLoading) return <p>Loading Simulation...</p>;
     if (error) return <p>Error loading simulation</p>;
 
     if (quizComplete) {
@@ -60,10 +91,6 @@ const QuizComponent = ({ simulationId }: { simulationId: number }) => {
             </div>
         );
     }
-
-    const currentQuestion = simulationData?.questions[currentQuestionIndex];
-
-    console.log(simulationData);
 
     return (
         <div className="flex flex-col items-center">
@@ -82,10 +109,10 @@ const QuizComponent = ({ simulationId }: { simulationId: number }) => {
                                     index
                                 )
                             }
-                            disabled={
-                                selectedAnswers[currentQuestion.questionId] !==
-                                undefined
-                            }
+                            // disabled={
+                            //     selectedAnswers[currentQuestion.questionId] !==
+                            //     undefined
+                            // }
                             className={`p-2 my-1 text-left border rounded ${
                                 selectedAnswers[currentQuestion.questionId] ===
                                 index
@@ -99,7 +126,13 @@ const QuizComponent = ({ simulationId }: { simulationId: number }) => {
                 </div>
                 <button
                     onClick={handleNextQuestion}
-                    className="mt-4 p-2 bg-blue-500 text-white rounded w-full"
+                    className={cn(
+                        'mt-4 p-2 bg-blue-500 text-white rounded w-full',
+                        selectedAnswers[currentQuestion.questionId] ===
+                            undefined
+                            ? 'disabled:bg-gray-500'
+                            : ''
+                    )}
                     disabled={
                         selectedAnswers[currentQuestion.questionId] ===
                         undefined

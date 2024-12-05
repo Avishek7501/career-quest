@@ -25,7 +25,11 @@ export class LeaderboardService {
                         Username: true // Include only the Username field
                     }
                 }
-            }
+            },
+            orderBy: {
+                TotalScore: 'desc'
+            },
+            take: 10
         });
     }
 

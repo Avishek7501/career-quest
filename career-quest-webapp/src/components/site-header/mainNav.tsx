@@ -14,8 +14,8 @@ export default function MainNav() {
 
     const handleLogout = async () => {
         try {
-            await logout();
-            localStorage.removeItem('authToken'); // Clear the token from localStorage
+            await logout().unwrap();
+            localStorage.removeItem('authToken');
             window.location.reload();
         } catch (error: any) {
             console.error('Logout failed', error);
@@ -23,8 +23,11 @@ export default function MainNav() {
         }
     };
 
+    const links = auth.isLoggedIn ? loggedinNavigationLinks : navigationLinks;
+
     return (
         <div className="mr-4 hidden gap-2 md:flex md:justify-between w-full">
+            {/* Logo */}
             <Link href="/">
                 <Image
                     src="/logo_white_large.png"
@@ -33,23 +36,27 @@ export default function MainNav() {
                     alt="Guhuza"
                 />
             </Link>
-            <div>
-                {(auth.isLoggedIn
-                    ? loggedinNavigationLinks
-                    : navigationLinks
-                ).map((item, index) => (
-                    <Button
-                        key={index}
-                        variant="default"
-                        className="bg-[#111111]"
-                    >
-                        <Link key={index} href={item.href}>
+
+            {/* Navigation Links */}
+            <div className="flex items-center gap-4">
+                {links.map((item, index) => (
+                    <Link key={index} href={item.href}>
+                        <Button
+                            variant="default"
+                            className="bg-[#111111] text-white hover:bg-[#333333]"
+                        >
                             {item.displayName}
-                        </Link>
-                    </Button>
+                        </Button>
+                    </Link>
                 ))}
+
+                {/* Logout Button */}
                 {auth.isLoggedIn && (
-                    <Button variant="destructive" onClick={handleLogout}>
+                    <Button
+                        variant="destructive"
+                        onClick={handleLogout}
+                        className="text-white hover:bg-red-700"
+                    >
                         Log out
                     </Button>
                 )}

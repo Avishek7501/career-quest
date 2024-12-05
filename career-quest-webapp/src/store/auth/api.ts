@@ -1,7 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import environments from '../../configs/environments';
-import { UserStatus } from '../../models/dtos/UserStatus';
 
 import { AUTH_REFRESH_TAG, AUTH_TAG_TYPES } from './types';
 import { CreateUser, UserLogin } from '@/models/dtos/CreateUser';
@@ -31,7 +30,7 @@ export const authApi = createApi({
         }
     }),
     endpoints: (builder) => ({
-        getStatus: builder.query<UserStatus, void>({
+        getStatus: builder.query<any, void>({
             query: () => ({
                 url: `/auth/status`,
                 method: 'GET'

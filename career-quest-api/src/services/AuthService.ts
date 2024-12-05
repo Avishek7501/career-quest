@@ -12,7 +12,7 @@ class AuthService {
     // Generate JWT token
     static generateToken(userId: number): string {
         return jwt.sign({ userId }, environments.JWT_SECRET ?? '', {
-            expiresIn: '5m'
+            expiresIn: '30d'
         });
     }
 

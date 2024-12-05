@@ -11,10 +11,15 @@ export const authMiddleware = (
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
 
+    console.log('Initial');
+    console.log(token);
+
     if (!token) {
         res.status(401).json({ message: 'Access denied' });
         return;
     }
+
+    console.log(token);
 
     jwt.verify(
         token,
