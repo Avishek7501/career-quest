@@ -8,7 +8,10 @@ const authController = new AuthController();
 
 authRouter.post('/register', async (req, res) => {
     try {
-        const response = await authController.register(req.body);
+        const response = await authController.register(
+            req.body,
+            req.query.referralCode as string
+        );
         res.json(response);
     } catch (error) {
         // Cast error to Error type
@@ -72,6 +75,23 @@ authRouter.post('/logout', async (req: Request, res: Response) => {
         res.json(response);
     } catch (error) {
         res.status(400).json({ message: (error as Error).message });
+    }
+});
+
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+authRouter.get('/referrals/:userId', async (req, res) => {
+    try {
+        const userId = parseInt(req.params.userId, 10);
+        if (isNaN(userId)) {
+            return res.status(400).json({ message: 'Invalid user ID' });
+        }
+
+        const response = await authController.getReferrals(userId);
+        res.json(response);
+    } catch (error) {
+        const errorMessage = (error as Error).message;
+        res.status(500).json({ message: errorMessage });
     }
 });
 

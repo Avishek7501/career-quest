@@ -8,6 +8,7 @@ import {
 } from '@/store/api/api';
 import QuizComponent from '@/components/quiz';
 import { useGetStatusQuery } from '@/store/auth/api';
+import Referrals from '@/components/referrals';
 
 export default function Dashboard() {
     const [selectedSimulationId, setSelectedSimulationId] = useState<
@@ -17,7 +18,17 @@ export default function Dashboard() {
         useGetJobSimulationsQuery();
     const { data: leaderboards } = useGetLeaderboardsQuery();
     const [updateLeaderboard] = useUpdateLeaderboardMutation();
-    const { isLoading: isUserLoading } = useGetStatusQuery();
+    const { data: userData, isLoading: isUserLoading } = useGetStatusQuery();
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = (referralCode: string) => {
+        const baseUrl = 'http://localhost:3000/auth/register';
+        navigator.clipboard.writeText(
+            `${baseUrl}?referralCode=${referralCode}`
+        );
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000); // Reset "copied" message after 2 seconds
+    };
 
     const handleQuizCompletion = async (score: number) => {
         try {
@@ -137,45 +148,52 @@ export default function Dashboard() {
                 {/* Right Sidebar - Friends */}
                 <div className="w-1/4 bg-gradient-to-r from-blue-700 to-blue-900 p-6 text-white flex flex-col gap-y-6 rounded-lg shadow-lg">
                     {/* Refer a Friend Section */}
-                    <div className="flex flex-col items-center gap-y-3">
-                        <button className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-4 py-2 rounded-lg shadow hover:from-purple-600 hover:to-purple-800 transition duration-300">
-                            Refer a Friend
-                        </button>
-                        <p className="text-sm text-center text-gray-300">
-                            Invite your friends to join and earn rewards!
-                        </p>
-                    </div>
+                    {userData?.user?.ReferralCode && (
+                        <div className="flex flex-col items-center gap-y-3">
+                            <button
+                                disabled
+                                className="bg-gradient-to-r from-purple-500 to-purple-700 text-white px-4 py-2 rounded-lg shadow transition duration-300"
+                            >
+                                Refer a Friend
+                            </button>
+                            <p className="text-sm text-center text-gray-300">
+                                Invite your friends to join and earn rewards!
+                            </p>
+                            <div className="flex flex-col items-center gap-2">
+                                <label
+                                    htmlFor="referralCode"
+                                    className="text-sm font-medium text-gray-700"
+                                >
+                                    Your Referral Link/Code:
+                                </label>
+                                <div className="relative w-full max-w-sm">
+                                    <input
+                                        id="referralCode"
+                                        type="text"
+                                        value={userData?.user?.ReferralCode}
+                                        readOnly
+                                        className="w-full p-2 pr-20 border border-gray-300 rounded-md bg-gray-100 text-gray-600 focus:outline-none"
+                                    />
+                                    <button
+                                        onClick={() =>
+                                            handleCopy(
+                                                userData?.user?.ReferralCode ??
+                                                    ''
+                                            )
+                                        }
+                                        className="absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+                                    >
+                                        {copied ? 'Copied!' : 'Share'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
-                    {/* Friends List Section */}
-                    <div>
-                        <h3 className="font-bold text-lg text-center border-b border-blue-400 pb-2">
-                            Your Friends
-                        </h3>
-                        {/** Friends list */}
-                        <ul className="flex flex-col gap-y-3 mt-3">
-                            <li className="flex items-center gap-x-3 bg-blue-600 p-3 rounded-md shadow-md hover:bg-blue-500 transition duration-300">
-                                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-blue-900 font-bold">
-                                    F1
-                                </div>
-                                <span>Friend 1</span>
-                            </li>
-                            <li className="flex items-center gap-x-3 bg-blue-600 p-3 rounded-md shadow-md hover:bg-blue-500 transition duration-300">
-                                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-blue-900 font-bold">
-                                    F2
-                                </div>
-                                <span>Friend 2</span>
-                            </li>
-                            <li className="flex items-center gap-x-3 bg-blue-600 p-3 rounded-md shadow-md hover:bg-blue-500 transition duration-300">
-                                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center text-blue-900 font-bold">
-                                    F3
-                                </div>
-                                <span>Friend 3</span>
-                            </li>
-                        </ul>
-                        <p className="text-center text-sm mt-3 text-gray-300">
-                            Want to add more friends? Share your invite link!
-                        </p>
-                    </div>
+                    {/** Friends list */}
+                    {userData?.user?.UserId && (
+                        <Referrals userId={userData?.user?.UserId} />
+                    )}
                 </div>
             </div>
         </div>

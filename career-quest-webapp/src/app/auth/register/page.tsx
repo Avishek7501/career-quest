@@ -2,7 +2,7 @@
 
 import { useRegisterMutation } from '@/store/auth/api';
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { selectIsLoggedIn } from '@/store/auth/selectors';
 import Link from 'next/link';
@@ -14,6 +14,10 @@ export default function Register() {
     const [register, { isLoading }] = useRegisterMutation();
     const router = useRouter();
     const isLoggedIn = useSelector(selectIsLoggedIn);
+    const searchParams = useSearchParams();
+
+    // Extract referral code from query parameters
+    const referralCode = searchParams.get('referralCode') || '';
 
     useEffect(() => {
         if (isLoggedIn) {
@@ -24,7 +28,12 @@ export default function Register() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await register({ username, email, password }).unwrap();
+            await register({
+                username,
+                email,
+                password,
+                referralCode
+            }).unwrap();
             alert('Registration successful! Please login.');
             router.push('/auth/login'); // Redirect to login page
         } catch (error: any) {
@@ -81,6 +90,14 @@ export default function Register() {
                                 className="w-full p-2 border border-gray-300 rounded mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                         </div>
+                        {referralCode && (
+                            <div className="mb-4">
+                                <label className="block text-sm font-semibold text-gray-700">
+                                    Referral Code
+                                </label>
+                                <p className="text-blue-500">{referralCode}</p>
+                            </div>
+                        )}
                         <button
                             type="submit"
                             disabled={isLoading}

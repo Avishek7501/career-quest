@@ -2426,6 +2426,13 @@
 													"type": "string",
 													"format": "date-time"
 												},
+												"ReferredById": {
+													"type": "number",
+													"format": "double"
+												},
+												"ReferralCode": {
+													"type": "string"
+												},
 												"Gender": {
 													"type": "string"
 												},
@@ -2453,6 +2460,8 @@
 												"ResetPasswordToken",
 												"UpdatedAt",
 												"CreatedAt",
+												"ReferredById",
+												"ReferralCode",
 												"Gender",
 												"Phone",
 												"Address",
@@ -2481,7 +2490,16 @@
 					"Auth"
 				],
 				"security": [],
-				"parameters": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "referralCode",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
 				"requestBody": {
 					"required": true,
 					"content": {
@@ -2586,6 +2604,13 @@
 											"type": "string",
 											"format": "date-time"
 										},
+										"ReferredById": {
+											"type": "number",
+											"format": "double"
+										},
+										"ReferralCode": {
+											"type": "string"
+										},
 										"Gender": {
 											"type": "string"
 										},
@@ -2613,6 +2638,8 @@
 										"ResetPasswordToken",
 										"UpdatedAt",
 										"CreatedAt",
+										"ReferredById",
+										"ReferralCode",
 										"Gender",
 										"Phone",
 										"Address",
@@ -2671,6 +2698,13 @@
 													"type": "string",
 													"format": "date-time"
 												},
+												"ReferredById": {
+													"type": "number",
+													"format": "double"
+												},
+												"ReferralCode": {
+													"type": "string"
+												},
 												"Gender": {
 													"type": "string"
 												},
@@ -2698,6 +2732,8 @@
 												"ResetPasswordToken",
 												"UpdatedAt",
 												"CreatedAt",
+												"ReferredById",
+												"ReferralCode",
 												"Gender",
 												"Phone",
 												"Address",
@@ -2776,6 +2812,96 @@
 						"required": false,
 						"schema": {
 							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/api/v1/auth/referrals/{userId}": {
+			"get": {
+				"operationId": "GetReferrals",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"referredUsers": {
+											"items": {
+												"properties": {
+													"CreatedAt": {
+														"type": "string",
+														"format": "date-time"
+													},
+													"Email": {
+														"type": "string"
+													},
+													"Username": {
+														"type": "string"
+													},
+													"UserId": {
+														"type": "number",
+														"format": "double"
+													}
+												},
+												"required": [
+													"CreatedAt",
+													"Email",
+													"Username",
+													"UserId"
+												],
+												"type": "object"
+											},
+											"type": "array"
+										},
+										"referredBy": {
+											"properties": {
+												"Email": {
+													"type": "string"
+												},
+												"Username": {
+													"type": "string"
+												},
+												"UserId": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"Email",
+												"Username",
+												"UserId"
+											],
+											"type": "object"
+										}
+									},
+									"required": [
+										"referredUsers",
+										"referredBy"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
 						}
 					}
 				]

@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import environments from '../../configs/environments';
 import { API_PATH, API_TAG_TYPES } from './types';
+import { AUTH_REFRESH_TAG, AUTH_TAG_TYPES } from '../auth/types';
 
 let token: string | null = null;
 const storedToken = localStorage.getItem('authToken');
@@ -10,7 +11,7 @@ if (storedToken) {
 
 export const api = createApi({
     reducerPath: API_PATH,
-    tagTypes: [API_TAG_TYPES],
+    tagTypes: [API_TAG_TYPES, AUTH_REFRESH_TAG, AUTH_TAG_TYPES],
     refetchOnReconnect: true,
     refetchOnMountOrArgChange: true,
     keepUnusedDataFor: 0,
@@ -26,7 +27,7 @@ export const api = createApi({
         // Leaderboard CRUD
         getLeaderboards: builder.query<any[], void>({
             query: () => ({ url: '/leaderboard', method: 'GET' }),
-            providesTags: [API_TAG_TYPES]
+            providesTags: [API_TAG_TYPES, AUTH_REFRESH_TAG, AUTH_TAG_TYPES]
         }),
         getLeaderboard: builder.query<any, number>({
             query: (id) => ({ url: `/leaderboard/${id}`, method: 'GET' })
@@ -44,7 +45,7 @@ export const api = createApi({
                 method: 'POST',
                 body: data
             }),
-            invalidatesTags: [API_TAG_TYPES]
+            invalidatesTags: [API_TAG_TYPES, AUTH_REFRESH_TAG, AUTH_TAG_TYPES]
         }),
 
         // JobApplication CRUD
@@ -61,17 +62,20 @@ export const api = createApi({
 
         // JobSimulation CRUD
         getJobSimulations: builder.query<any[], void>({
-            query: () => ({ url: '/job/simulation', method: 'GET' })
+            query: () => ({ url: '/job/simulation', method: 'GET' }),
+            providesTags: [API_TAG_TYPES, AUTH_REFRESH_TAG, AUTH_TAG_TYPES]
         }),
 
         // JobCategory CRUD
         getJobCategories: builder.query<any[], void>({
-            query: () => ({ url: '/job/category', method: 'GET' })
+            query: () => ({ url: '/job/category', method: 'GET' }),
+            providesTags: [API_TAG_TYPES, AUTH_REFRESH_TAG, AUTH_TAG_TYPES]
         }),
 
         // JobSkill CRUD
         getJobSkills: builder.query<any[], void>({
-            query: () => ({ url: '/job/skill', method: 'GET' })
+            query: () => ({ url: '/job/skill', method: 'GET' }),
+            providesTags: [API_TAG_TYPES, AUTH_REFRESH_TAG, AUTH_TAG_TYPES]
         }),
         getInterviewQuestions: builder.query<
             any[],
@@ -80,7 +84,8 @@ export const api = createApi({
             query: ({ jobSimulationId }) => ({
                 url: `/job/simulation/${jobSimulationId}/questions`,
                 method: 'GET'
-            })
+            }),
+            providesTags: [API_TAG_TYPES, AUTH_REFRESH_TAG, AUTH_TAG_TYPES]
         }),
 
         // Fetch possible answers for an interview question
@@ -91,11 +96,13 @@ export const api = createApi({
             query: ({ interviewQuestionId }) => ({
                 url: `/interview/question/${interviewQuestionId}/answers`,
                 method: 'GET'
-            })
+            }),
+            providesTags: [API_TAG_TYPES, AUTH_REFRESH_TAG, AUTH_TAG_TYPES]
         }),
 
         getStartSimulation: builder.query<any, number>({
-            query: (simulationId) => `/job/simulation/${simulationId}/start`
+            query: (simulationId) => `/job/simulation/${simulationId}/start`,
+            providesTags: [API_TAG_TYPES, AUTH_REFRESH_TAG, AUTH_TAG_TYPES]
         }),
 
         // Account Management
@@ -103,7 +110,8 @@ export const api = createApi({
             query: () => ({
                 url: `/auth/profile/me`,
                 method: 'GET'
-            })
+            }),
+            providesTags: [API_TAG_TYPES, AUTH_REFRESH_TAG, AUTH_TAG_TYPES]
             //providesTags: ['UserProfile'] // Add tag for cache handling
         }),
         updateProfile: builder.mutation<any, any>({
@@ -133,7 +141,8 @@ export const api = createApi({
                 } catch (error) {
                     console.error('Logout failed', error);
                 }
-            }
+            },
+            invalidatesTags: [API_TAG_TYPES, AUTH_REFRESH_TAG, AUTH_TAG_TYPES]
         })
     })
 });

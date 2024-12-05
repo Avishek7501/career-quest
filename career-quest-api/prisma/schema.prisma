@@ -15,6 +15,10 @@ model User {
   Address                                   String?
   Phone                                     String?
   Gender                                    String?
+  ReferralCode                              String?          @unique
+  ReferredBy                                User?            @relation("UserReferrals", fields: [ReferredById], references: [UserId])
+  ReferredById                              Int?
+  Referrals                                 User[]           @relation("UserReferrals")
   CreatedAt                                 DateTime         @default(now())
   UpdatedAt                                 DateTime         @updatedAt
   JobApplications                           JobApplication[]

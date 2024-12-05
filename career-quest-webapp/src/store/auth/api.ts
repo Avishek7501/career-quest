@@ -4,6 +4,7 @@ import environments from '../../configs/environments';
 
 import { AUTH_REFRESH_TAG, AUTH_TAG_TYPES } from './types';
 import { CreateUser, UserLogin } from '@/models/dtos/CreateUser';
+import { API_TAG_TYPES } from '../api/types';
 
 export const AUTH_REDUCER_PATH = 'authApi';
 
@@ -15,7 +16,7 @@ if (storedToken) {
 
 export const authApi = createApi({
     reducerPath: AUTH_REDUCER_PATH,
-    tagTypes: [AUTH_TAG_TYPES, AUTH_REFRESH_TAG],
+    tagTypes: [AUTH_TAG_TYPES, AUTH_REFRESH_TAG, API_TAG_TYPES],
     refetchOnReconnect: true,
     refetchOnMountOrArgChange: true,
     keepUnusedDataFor: 0,
@@ -35,11 +36,11 @@ export const authApi = createApi({
                 url: `/auth/status`,
                 method: 'GET'
             }),
-            providesTags: [AUTH_REFRESH_TAG]
+            providesTags: [AUTH_REFRESH_TAG, API_TAG_TYPES]
         }),
         register: builder.mutation<any, CreateUser>({
             query: (body) => ({
-                url: '/auth/register',
+                url: `/auth/register${body?.referralCode ? `?referralCode=${body.referralCode}` : ''}`,
                 method: 'POST',
                 body: body
             }),
@@ -51,7 +52,7 @@ export const authApi = createApi({
                 method: 'POST',
                 body: body
             }),
-            invalidatesTags: [AUTH_TAG_TYPES],
+            invalidatesTags: [AUTH_TAG_TYPES, AUTH_REFRESH_TAG, API_TAG_TYPES],
             onQueryStarted: async (args, { queryFulfilled }) => {
                 try {
                     const { data } = await queryFulfilled;
@@ -67,7 +68,7 @@ export const authApi = createApi({
                 url: `/auth/logout`,
                 method: 'POST'
             }),
-            invalidatesTags: [AUTH_REFRESH_TAG],
+            invalidatesTags: [AUTH_REFRESH_TAG, API_TAG_TYPES],
             onQueryStarted: async (args, { queryFulfilled }) => {
                 try {
                     await queryFulfilled;
@@ -77,6 +78,13 @@ export const authApi = createApi({
                     console.error('Logout failed', error);
                 }
             }
+        }),
+        getReferrals: builder.query<any, number | string>({
+            query: (userId) => ({
+                url: `/auth/referrals/${userId}`,
+                method: 'GET'
+            }),
+            providesTags: [AUTH_TAG_TYPES, AUTH_REFRESH_TAG, API_TAG_TYPES]
         })
     })
 });
@@ -86,5 +94,6 @@ export const {
     useLazyGetStatusQuery,
     useLogoutMutation,
     useLoginMutation,
-    useRegisterMutation
+    useRegisterMutation,
+    useGetReferralsQuery
 } = authApi;

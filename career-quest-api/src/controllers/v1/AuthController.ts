@@ -1,4 +1,4 @@
-import { Header, Security } from 'tsoa';
+import { Header, Query, Security } from 'tsoa';
 import { Route, Tags, Get, Post, Body, Path } from 'tsoa';
 
 import AuthService from '../../services/AuthService';
@@ -18,12 +18,18 @@ export class AuthController {
             username: string;
             email: string;
             password: string;
-        }
+        },
+        @Query() referralCode?: string
     ) {
         const existingUser = await UserService.getUserByEmail(email);
         if (existingUser) throw new Error('User already exists');
 
-        const user = await UserService.createUser(username, email, password);
+        const user = await UserService.createUser(
+            username,
+            email,
+            password,
+            referralCode
+        );
         return { message: 'User registered successfully', user };
     }
 
@@ -66,5 +72,13 @@ export class AuthController {
         if (!authHeader) throw new Error('Authorization header is missing');
         const token = authHeader.split(' ')[1];
         return AuthService.logout(token);
+    }
+
+    @Get('/referrals/{userId}')
+    @Security('jwt')
+    async getReferrals(@Path() userId: number) {
+        const referrals = await UserService.getReferrals(userId);
+        if (!referrals) throw new Error('User not found');
+        return referrals;
     }
 }
